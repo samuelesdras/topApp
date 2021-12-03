@@ -1,0 +1,36 @@
+{
+    "posts": [
+      {
+        "id": 1,
+        "title": "Cachorro",
+        "image": "https://s2.glbimg.com/nvjFq8VRjyrpdQqaOeywz-5DFwY=/e.glbimg.com/og/ed/f/original/2021/08/27/captura_de_tela_2021-08-27_as_11.01.15.png",
+        "description": "O melhor amigo do homem.",
+        "price": "R$500,00",
+        "author": "Vendedor de cachorro"
+      },
+      {
+        "id": 2,
+        "title": "Gato",
+        "image": "https://i0.statig.com.br/bancodeimagens/bs/5s/h6/bs5sh6d17lsu5rozqbzaifemm.jpg",
+        "description": "Inimigo dos ratos e dos cachorros!",
+        "price": "R$100,00",
+        "author": "Vendedor de gatos"
+      },
+      {
+        "id": 3,
+        "title": "Leão",
+        "image": "https://static.dicionariodesimbolos.com.br/upload/6c/83/leao-1_xl.jpeg",
+        "description": "Rei da selva!",
+        "price": "R$10.000,00",
+        "author": "Vendedor de leões"
+      },
+      {
+        "id": 4,
+        "title": "Elefante",
+        "image": "https://static.biologianet.com/2020/05/elefante-africano.jpg",
+        "description": "Maior animal terrestre.",
+        "price": "R$100.000,00",
+        "author": "Vendedor de elefantes"
+      }
+    ]
+  }
