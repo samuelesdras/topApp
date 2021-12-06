@@ -1,6 +1,14 @@
 import {useNavigation} from '@react-navigation/native';
-import React, {useContext} from 'react';
-import {View, Text, Button, ScrollView, Image, StyleSheet} from 'react-native';
+import React, {useContext, useEffect} from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  StyleSheet,
+  ActivityIndicator,
+} from 'react-native';
+import {Button} from 'react-native-elements';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParamList} from '../../screens/RootStackParams';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -16,44 +24,72 @@ const CartScreen = ({route}) => {
 
   return (
     <>
-      <ScrollView>
-        {context.state.map(prod => (
-          <Card key={prod.id}>
-            <Card.Title>{prod.title}</Card.Title>
-            <Card.Divider />
-            <Image
-              source={{uri: prod.image}}
-              style={styles.picture}
-              resizeMode="contain"
+      {context.state.length > 0 ? (
+        <ScrollView>
+          {context.state.map(prod => (
+            <Card key={prod.id}>
+              <Card.Title style={{fontSize: 20}}>{prod.title}</Card.Title>
+              <Card.Divider />
+              <Image
+                source={{uri: prod.image}}
+                style={styles.picture}
+                resizeMode="contain"
+              />
+              <View style={styles.detailsView}>
+                <View>
+                  <Text>{prod.description}</Text>
+                  <Text style={{fontWeight: '900', fontSize: 15}}>
+                    {prod.price}
+                  </Text>
+                  <Text>
+                    Quantidade no carrinho:{' '}
+                    <Text style={{fontWeight: '600', fontSize: 15}}>
+                      {prod.quant}
+                    </Text>
+                  </Text>
+                </View>
+                <View style={styles.quantityCard}>
+                  <Icon
+                    name="plus"
+                    size={20}
+                    color="#000"
+                    style={styles.plusIcon}
+                    onPress={() => context.addtoCart({prod})}
+                  />
+                  <Icon
+                    name="minus"
+                    size={20}
+                    color="#000"
+                    style={styles.minusIcon}
+                    onPress={() => context.removeFromCart({prod})}
+                  />
+                </View>
+              </View>
+            </Card>
+          ))}
+          <View style={styles.keepBuyinBtnView}>
+            <Button
+              buttonStyle={styles.keepBuyinBtn}
+              title="Continuar comprando"
+              onPress={() => navigation.navigate('Home')}
             />
-            <Text>{prod.description}</Text>
-            <Text>{prod.price}</Text>
-            <Text>Quantidade no carrinho: {prod.quant}</Text>
-            <View style={styles.quantityCard}>
-              <Icon
-                name="plus"
-                size={20}
-                color="#000"
-                style={styles.plusIcon}
-                onPress={() => context.addtoCart({prod})}
-              />
-              <Icon
-                name="minus"
-                size={20}
-                color="#000"
-                style={styles.minusIcon}
-                onPress={() => context.removeFromCart({prod})}
-              />
-            </View>
-          </Card>
-        ))}
-      </ScrollView>
-      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-        <Button
-          title="Continuar comprando"
-          onPress={() => navigation.navigate('Home')}
-        />
-      </View>
+          </View>
+        </ScrollView>
+      ) : (
+        <>
+          <View style={styles.noItem}>
+            <ActivityIndicator size="large" />
+            <Text>Nenhum item no carrinho</Text>
+          </View>
+          <View style={styles.keepBuyinBtnView}>
+            <Button
+              buttonStyle={styles.keepBuyinBtn}
+              title="Continuar comprando"
+              onPress={() => navigation.navigate('Home')}
+            />
+          </View>
+        </>
+      )}
     </>
   );
 };
@@ -63,16 +99,37 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 200,
   },
+  detailsView: {
+    flexDirection: 'row',
+    marginTop: 10,
+  },
   quantityCard: {
     flex: 1,
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
   },
   plusIcon: {
     marginRight: 20,
+    marginLeft: 25,
     marginTop: 10,
   },
   minusIcon: {
     marginTop: 10,
+  },
+  noItem: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  keepBuyinBtn: {
+    borderRadius: 15,
+    width: 250,
+  },
+  keepBuyinBtnView: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
+    marginBottom: 10,
   },
 });
 

@@ -5,7 +5,6 @@ import {
   Text,
   StyleSheet,
   TouchableHighlight,
-  Image,
   ActivityIndicator,
 } from 'react-native';
 import {Button} from 'react-native-elements';
@@ -16,6 +15,7 @@ import {RootStackParamList} from '../../screens/RootStackParams';
 import axios from 'axios';
 
 import Icon from 'react-native-vector-icons/AntDesign';
+import Dot from 'react-native-vector-icons/Entypo';
 import {Card} from 'react-native-elements';
 
 import {MyContext} from '../../context';
@@ -26,11 +26,10 @@ const Home = () => {
   const navigation = useNavigation<homeProp>();
 
   const [prodList, setProdList] = useState();
-  const [limit, setLimit] = useState(4);
   const context = useContext(MyContext);
 
   useEffect(() => {
-    axios.get(`http://10.0.2.2:3000/posts?_limit=${limit}`).then(response => {
+    axios.get(`http://10.0.2.2:3000/posts`).then(response => {
       setProdList(response.data).catch(err => {
         console.log('Error description: ' + err);
       });
@@ -40,7 +39,9 @@ const Home = () => {
   return (
     <>
       <View style={styles.cartView}>
-        <Text style={styles.cartCount}>{context.prodQuant()}</Text>
+        {context.totalQuant != 0 ? (
+          <Text style={styles.cartCount}>{context.totalQuant}</Text>
+        ) : null}
         <TouchableHighlight onPress={() => navigation.navigate('Cart')}>
           <Icon name="shoppingcart" size={40} color="#000" />
         </TouchableHighlight>
@@ -49,20 +50,36 @@ const Home = () => {
         {prodList ? (
           prodList.map(prod => (
             <Card key={prod.id}>
-              <Card.Title>{prod.title}</Card.Title>
-              <Card.Divider />
-              <Image
-                source={{uri: prod.image}}
-                style={styles.picture}
-                resizeMode="contain"
-              />
-              <Text>{prod.description}</Text>
-              <Text>{prod.price}</Text>
-              <Button
-                icon={<Icon name="shoppingcart" size={25} color="white" />}
-                title="Colocar no carrinho"
-                onPress={() => context.addtoCart({prod})}
-              />
+              <View style={{flex: 1, flexDirection: 'row'}}>
+                <View>
+                  <Card.Image
+                    source={{uri: prod.image}}
+                    style={styles.picture}
+                    resizeMode="contain"
+                  />
+                </View>
+                <View style={styles.details}>
+                  <View style={styles.detailsTitleView}>
+                    <Text style={styles.detailsTitle}>{prod.title}</Text>
+                  </View>
+                  <Text>
+                    <Dot name="dot-single" size={25} color="black" />
+                    {prod.description}
+                  </Text>
+                  <Text>
+                    <Dot name="dot-single" size={25} color="black" />
+                    {prod.price}
+                  </Text>
+                </View>
+              </View>
+              <View style={styles.addToCardBtnView}>
+                <Button
+                  buttonStyle={styles.addToCardBtn}
+                  icon={<Icon name="shoppingcart" size={25} color="white" />}
+                  title="Colocar no carrinho"
+                  onPress={() => context.addtoCart({prod})}
+                />
+              </View>
             </Card>
           ))
         ) : (
@@ -76,9 +93,8 @@ const Home = () => {
 const styles = StyleSheet.create({
   cartView: {
     flexDirection: 'row-reverse',
-    marginLeft: 10,
+    marginLeft: 20,
     marginTop: 10,
-    borderRadius: 50,
   },
   cartCount: {
     backgroundColor: 'red',
@@ -90,8 +106,31 @@ const styles = StyleSheet.create({
     paddingLeft: 6,
   },
   picture: {
-    width: '100%',
-    height: 200,
+    width: 180,
+  },
+  addToCardBtn: {
+    borderRadius: 15,
+    width: 250,
+  },
+  addToCardBtnView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 5,
+  },
+  details: {
+    marginLeft: 7,
+    width: 180,
+  },
+  detailsTitle: {
+    marginBottom: 2,
+    fontSize: 20,
+    fontWeight: '600',
+  },
+  detailsTitleView: {
+    flex: 0.2,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

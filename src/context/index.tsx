@@ -1,58 +1,49 @@
-import React, {Component} from 'react';
+import React, {createContext, useState} from 'react';
 
-const MyContext = React.createContext();
+export const MyContext = createContext();
 
-class MyProvider extends Component {
-  state = [];
+export const MyProvider = ({children}) => {
+  const [state, setState] = useState([]);
+  const [totalQuant, setTotalQuant] = useState(0);
 
-  addtoCartHandler = ({prod}) => {
+  const addtoCartHandler = ({prod}) => {
     let isNew = false;
-    for (let i = 0; i < this.state.length; i++) {
-      if (this.state[i].id == prod.id) {
+    for (let i = 0; i < state.length; i++) {
+      if (state[i].id == prod.id) {
         isNew = true;
-        this.state[i].quant = this.state[i].quant + 1;
+        state[i].quant = state[i].quant + 1;
+        setTotalQuant(totalQuant + 1);
       }
     }
     if (!isNew) {
       prod.quant = 1;
-      this.state.push(prod);
+      state.push(prod);
+      setTotalQuant(totalQuant + 1);
     }
   };
 
-  removeFromCartHandler = ({prod}) => {
-    for (let i = 0; i < this.state.length; i++) {
-      if (this.state[i].id == prod.id && this.state[i].quant > 0) {
-        this.state[i].quant = this.state[i].quant - 1;
-      } else if (this.state[i].id == prod.id && this.state[i].quant <= 0) {
-        this.state.splice(i, 1);
+  const removeFromCartHandler = ({prod}) => {
+    for (let i = 0; i < state.length; i++) {
+      if (state[i].id == prod.id && state[i].quant > 0) {
+        state[i].quant = state[i].quant - 1;
+        setTotalQuant(totalQuant - 1);
+      } else if (state[i].id == prod.id && state[i].quant <= 0) {
+        state.splice(i, 1);
       }
     }
   };
 
-  prodQuantHandler = () => {
-    let quant = 0;
-    for (let i = 0; i < this.state.length; i++) {
-      // quant = this.state[i].quant + quant;
-      quant = 10;
-    }
-    return quant;
-  };
-
-  render() {
-    return (
-      <>
-        <MyContext.Provider
-          value={{
-            state: this.state,
-            addtoCart: this.addtoCartHandler,
-            removeFromCart: this.removeFromCartHandler,
-            prodQuant: this.prodQuantHandler,
-          }}>
-          {this.props.children}
-        </MyContext.Provider>
-      </>
-    );
-  }
-}
-
-export {MyContext, MyProvider};
+  return (
+    <>
+      <MyContext.Provider
+        value={{
+          state: state,
+          addtoCart: addtoCartHandler,
+          removeFromCart: removeFromCartHandler,
+          totalQuant: totalQuant,
+        }}>
+        {children}
+      </MyContext.Provider>
+    </>
+  );
+};
